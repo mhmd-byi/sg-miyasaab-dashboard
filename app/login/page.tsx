@@ -1,35 +1,35 @@
-'use client';
+"use client";
 
-import { useState, type FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [identifier, setIdentifier] = useState('');
-  const [password, setPassword] = useState('');
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ identifier, password }),
       });
       const body = await res.json();
       if (!res.ok) {
-        setError(body.error ?? 'Login failed.');
+        setError(body.error ?? "Login failed.");
         return;
       }
-      router.push('/');
+      router.push("/");
       router.refresh();
     } catch {
-      setError('Network error. Please try again.');
+      setError("Network error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -43,13 +43,19 @@ export default function LoginPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-900 text-white text-2xl font-bold mb-4 shadow-lg">
             SG
           </div>
-          <h1 className="text-2xl font-bold text-amber-900 tracking-tight">Miyasaab Dashboard</h1>
-          <p className="text-amber-700 text-sm mt-1">Gold &amp; Jewellery Partnership</p>
+          <h1 className="text-2xl font-bold text-amber-900 tracking-tight">
+            Miyasaab Dashboard
+          </h1>
+          <p className="text-amber-700 text-sm mt-1">
+            Gold &amp; Jewellery Partnership
+          </p>
         </div>
 
         {/* Card */}
         <div className="bg-white rounded-2xl shadow-lg border border-amber-100 p-8">
-          <h2 className="text-lg font-semibold text-zinc-800 mb-6">Sign in to your account</h2>
+          <h2 className="text-lg font-semibold text-zinc-800 mb-6">
+            Sign in to your account
+          </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -59,8 +65,8 @@ export default function LoginPage() {
               <input
                 type="text"
                 value={identifier}
-                onChange={e => setIdentifier(e.target.value)}
-                placeholder="admin_sg or email@example.com"
+                onChange={(e) => setIdentifier(e.target.value)}
+                placeholder="Username or email address"
                 required
                 autoFocus
                 autoComplete="username"
@@ -74,9 +80,9 @@ export default function LoginPage() {
               </label>
               <div className="relative">
                 <input
-                  type={showPw ? 'text' : 'password'}
+                  type={showPw ? "text" : "password"}
                   value={password}
-                  onChange={e => setPassword(e.target.value)}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
                   autoComplete="current-password"
@@ -84,10 +90,10 @@ export default function LoginPage() {
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPw(v => !v)}
+                  onClick={() => setShowPw((v) => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-zinc-400 hover:text-zinc-600 transition-colors"
                 >
-                  {showPw ? 'Hide' : 'Show'}
+                  {showPw ? "Hide" : "Show"}
                 </button>
               </div>
             </div>
@@ -109,7 +115,7 @@ export default function LoginPage() {
                   Signing in…
                 </span>
               ) : (
-                'Sign in'
+                "Sign in"
               )}
             </button>
           </form>
