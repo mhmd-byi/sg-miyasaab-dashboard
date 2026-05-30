@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, type FormEvent } from 'react';
+import { useState, useMemo, Fragment, type FormEvent } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fmt, fmtGold, fmtRate } from '@/lib/utils';
 import { calcMonthRow } from '@/lib/calculations';
@@ -321,16 +321,15 @@ export function R2DataTab() {
             <table className="w-full text-sm whitespace-nowrap">
               <thead>
                 <tr className="bg-amber-50 border-b border-amber-200">
-                  {['','#','Tag No','Status','Sale Date','Purity','Gold (g)','Months','MS Share ₨','SG Share ₨',''].map(h => (
-                    <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-amber-800 uppercase tracking-wide">{h}</th>
+                  {['','#','Tag No','Status','Sale Date','Purity','Gold (g)','Months','MS Share ₨','SG Share ₨',''].map((h, i) => (
+                    <th key={i} className="px-4 py-3 text-left text-xs font-semibold text-amber-800 uppercase tracking-wide">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {items.map((item, idx) => (
-                  <>
+                  <Fragment key={item._id}>
                     <tr
-                      key={item._id}
                       className={`border-b border-zinc-100 cursor-pointer hover:bg-amber-50/40 ${idx % 2 !== 0 ? 'bg-zinc-50/30' : ''} ${expandedId === item._id ? 'bg-amber-50/60' : ''}`}
                       onClick={() => setExpandedId(v => v === item._id ? null : item._id)}
                     >
@@ -363,13 +362,13 @@ export function R2DataTab() {
                       </td>
                     </tr>
                     {expandedId === item._id && (
-                      <tr key={`${item._id}-exp`}>
+                      <tr>
                         <td colSpan={11} className="p-0">
                           <MonthForm item={item} onDone={() => setExpandedId(null)} />
                         </td>
                       </tr>
                     )}
-                  </>
+                  </Fragment>
                 ))}
               </tbody>
             </table>
