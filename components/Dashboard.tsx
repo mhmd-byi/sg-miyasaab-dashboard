@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useQueries, useQueryClient } from '@tanstack/react-query';
+import { useQueries } from '@tanstack/react-query';
 import { KpiCard } from './KpiCard';
 import { Report1View } from './Report1View';
 import { Report2View } from './Report2View';
@@ -28,8 +28,6 @@ async function fetchJson<T>(url: string): Promise<T> {
 
 export function Dashboard() {
   const [activeTab, setActiveTab] = useState<Tab>('report3');
-  const [seeding, setSeeding] = useState(false);
-  const queryClient = useQueryClient();
   const { data: currentUser } = useCurrentUser();
   const isAdmin = currentUser?.role === 'admin';
 
@@ -56,20 +54,6 @@ export function Dashboard() {
     (r1.data?.items?.length ?? 0) === 0 &&
     (r2.data?.items?.length ?? 0) === 0 &&
     (r3.data?.months?.length ?? 0) === 0;
-
-  async function handleSync() {
-    setSeeding(true);
-    try {
-      const res = await fetch('/api/seed', { method: 'POST' });
-      const body = await res.json();
-      if (!body.ok) throw new Error(body.error);
-      await queryClient.invalidateQueries();
-    } catch (e) {
-      alert('Sync failed: ' + String(e));
-    } finally {
-      setSeeding(false);
-    }
-  }
 
   const overallMs =
     (r1.data?.totals.msShare ?? 0) +
@@ -101,22 +85,6 @@ export function Dashboard() {
             <span className="text-amber-300 text-xs hidden sm:block">
               MS {REPORT_CONFIG.ms.share}% · SG {REPORT_CONFIG.sg.share}%
             </span>
-            {isAdmin && (
-              <button
-                onClick={handleSync}
-                disabled={seeding}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-700 hover:bg-amber-600 disabled:opacity-60 text-white text-sm font-medium transition-colors shadow-sm"
-              >
-                {seeding ? (
-                  <>
-                    <span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                    Syncing…
-                  </>
-                ) : (
-                  <>↻ Sync from Excel</>
-                )}
-              </button>
-            )}
             {currentUser && <UserMenu user={currentUser} />}
           </div>
         </div>
@@ -141,18 +109,9 @@ export function Dashboard() {
             <p className="text-lg font-semibold text-zinc-700 mb-2">No data yet</p>
             <p className="text-sm text-zinc-400 mb-5">
               {isAdmin
-                ? <>Click <strong>Sync from Excel</strong> to import the latest data.</>
-                : 'No data has been loaded yet. Please ask an admin to sync the data.'}
+                ? <>Go to <strong>Data Entry</strong> to add records.</>
+                : 'No data has been loaded yet. Please ask an admin to add data.'}
             </p>
-            {isAdmin && (
-              <button
-                onClick={handleSync}
-                disabled={seeding}
-                className="px-6 py-2.5 rounded-lg bg-amber-700 hover:bg-amber-600 text-white text-sm font-medium transition-colors"
-              >
-                {seeding ? 'Syncing…' : '↻ Sync from Excel'}
-              </button>
-            )}
           </div>
         )}
 
