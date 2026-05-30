@@ -1,9 +1,15 @@
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 import { dbConnect } from '@/lib/db';
 import { Report1Model, Report2Model, Report3Model } from '@/lib/models';
 import { parseAllReports } from '@/lib/excel';
+import { getSessionFromRequest } from '@/lib/auth';
 
-export async function POST() {
+export async function POST(req: NextRequest) {
+  const session = await getSessionFromRequest(req);
+  if (!session || session.role !== 'admin') {
+    return NextResponse.json({ ok: false, error: 'Forbidden' }, { status: 403 });
+  }
   try {
     await dbConnect();
     const { report1, report2, report3 } = parseAllReports();

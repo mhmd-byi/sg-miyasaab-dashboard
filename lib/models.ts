@@ -30,6 +30,7 @@ const Report1Schema = new Schema(
     goldWeightG: Number,
     goldRate22K: Number,
     purity: Number,
+    labourRatePct: { type: Number, default: 0 },
     labourCostPrice: Number,
     labourCostCharged: Number,
     goldSellPrice: Number,
@@ -70,6 +71,20 @@ const Report3Schema = new Schema(
   { collection: 'report3', versionKey: false },
 );
 
+// ── Users ─────────────────────────────────────────────────────────────────────
+
+const UserSchema = new Schema(
+  {
+    username: { type: String, unique: true, required: true, trim: true },
+    email: { type: String, unique: true, required: true, lowercase: true, trim: true },
+    passwordHash: { type: String, required: true },
+    role: { type: String, enum: ['admin', 'user'], default: 'user' },
+    createdAt: { type: Date, default: Date.now },
+    createdBy: { type: String, default: 'system' },
+  },
+  { collection: 'users', versionKey: false },
+);
+
 // ── Model exports ─────────────────────────────────────────────────────────────
 // Use Model<unknown> so TS accepts .find()/.lean() etc. in API routes.
 // Guard against hot-reload re-registration with nullish coalescing.
@@ -88,3 +103,7 @@ export const Report2Model: AnyModel =
 export const Report3Model: AnyModel =
   (mongoose.models['Report3'] as AnyModel) ??
   mongoose.model('Report3', Report3Schema);
+
+export const UserModel: AnyModel =
+  (mongoose.models['User'] as AnyModel) ??
+  mongoose.model('User', UserSchema);

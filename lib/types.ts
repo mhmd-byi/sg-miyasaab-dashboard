@@ -4,6 +4,7 @@ export interface Report1Item {
   goldWeightG: number;
   goldRate22K: number;
   purity: number;
+  labourRatePct?: number;  // manual per-item %, e.g. 7 or 11 (optional for seeded data)
   labourCostPrice: number;
   labourCostCharged: number;
   goldSellPrice: number;

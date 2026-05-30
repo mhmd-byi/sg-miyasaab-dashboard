@@ -6,8 +6,10 @@ import { KpiCard } from './KpiCard';
 import { Report1View } from './Report1View';
 import { Report2View } from './Report2View';
 import { Report3View } from './Report3View';
+import { UserMenu } from './UserMenu';
 import { fmt } from '@/lib/utils';
 import { REPORT_CONFIG } from '@/lib/config';
+import { useCurrentUser } from '@/lib/hooks/useCurrentUser';
 import type { DashboardData } from '@/lib/types';
 
 type Tab = 'report1' | 'report2' | 'report3';
@@ -28,6 +30,8 @@ export function Dashboard() {
   const [activeTab, setActiveTab] = useState<Tab>('report3');
   const [seeding, setSeeding] = useState(false);
   const queryClient = useQueryClient();
+  const { data: currentUser } = useCurrentUser();
+  const isAdmin = currentUser?.role === 'admin';
 
   const [r1, r2, r3] = useQueries({
     queries: [
@@ -97,20 +101,23 @@ export function Dashboard() {
             <span className="text-amber-300 text-xs hidden sm:block">
               MS {REPORT_CONFIG.ms.share}% · SG {REPORT_CONFIG.sg.share}%
             </span>
-            <button
-              onClick={handleSync}
-              disabled={seeding}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-700 hover:bg-amber-600 disabled:opacity-60 text-white text-sm font-medium transition-colors shadow-sm"
-            >
-              {seeding ? (
-                <>
-                  <span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                  Syncing…
-                </>
-              ) : (
-                <>↻ Sync from Excel</>
-              )}
-            </button>
+            {isAdmin && (
+              <button
+                onClick={handleSync}
+                disabled={seeding}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-700 hover:bg-amber-600 disabled:opacity-60 text-white text-sm font-medium transition-colors shadow-sm"
+              >
+                {seeding ? (
+                  <>
+                    <span className="inline-block w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                    Syncing…
+                  </>
+                ) : (
+                  <>↻ Sync from Excel</>
+                )}
+              </button>
+            )}
+            {currentUser && <UserMenu user={currentUser} />}
           </div>
         </div>
       </header>
@@ -133,16 +140,19 @@ export function Dashboard() {
           <div className="bg-white rounded-xl p-10 border border-amber-200 text-center shadow-sm">
             <p className="text-lg font-semibold text-zinc-700 mb-2">No data yet</p>
             <p className="text-sm text-zinc-400 mb-5">
-              Click <strong>Sync from Excel</strong> to import the latest data from the Excel file
-              into the database.
+              {isAdmin
+                ? <>Click <strong>Sync from Excel</strong> to import the latest data.</>
+                : 'No data has been loaded yet. Please ask an admin to sync the data.'}
             </p>
-            <button
-              onClick={handleSync}
-              disabled={seeding}
-              className="px-6 py-2.5 rounded-lg bg-amber-700 hover:bg-amber-600 text-white text-sm font-medium transition-colors"
-            >
-              {seeding ? 'Syncing…' : '↻ Sync from Excel'}
-            </button>
+            {isAdmin && (
+              <button
+                onClick={handleSync}
+                disabled={seeding}
+                className="px-6 py-2.5 rounded-lg bg-amber-700 hover:bg-amber-600 text-white text-sm font-medium transition-colors"
+              >
+                {seeding ? 'Syncing…' : '↻ Sync from Excel'}
+              </button>
+            )}
           </div>
         )}
 
