@@ -1,13 +1,13 @@
 // Edit these labels if the sheet mapping changes
 export const REPORT_CONFIG = {
   report1: {
-    label: 'Ornaments Sold',
-    description: 'Individually sold ornament pieces with per-item profit split',
+    label: 'MS Design – Gold Ornaments (Parent)',
+    description: 'Parent inventory — gold ornaments received from MS Design for selling by Miyasaab · per-item profit split',
     sheetName: 'P&L REPORT 1',
   },
   report2: {
-    label: 'Ornaments Inventory',
-    description: 'Ornament pieces — sold & pending inventory — with monthly compounding profit tracking',
+    label: 'SG Design – Sold Ornaments (Child)',
+    description: 'Child of MS Design parent inventory — ornaments sold through SG with MBAN/MRING/MBRAC tags · resale profit tracking',
     sheetName: 'P&L REPORT 2',
   },
   report3: {
