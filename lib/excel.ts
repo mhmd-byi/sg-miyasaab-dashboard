@@ -1,7 +1,7 @@
 import * as XLSX from 'xlsx';
 import path from 'path';
 import fs from 'fs';
-import type { DashboardData, Report1Item, MonthRow, Report2Item } from './types';
+import type { DashboardData, Report1Item, MonthRow, Report2Item, BatchSummary } from './types';
 
 const EXCEL_FILE = path.join(process.cwd(), 'miyaa_saab_dashboard 3005261325.xlsx');
 
@@ -177,6 +177,33 @@ function parseReport2() {
   const sold = items.filter(i => i.status === 'sold');
   const pending = items.filter(i => i.status === 'pending');
 
+  const batchMap = new Map<string, BatchSummary>();
+  for (const item of items) {
+    const key = item.batch || 'Unassigned';
+    if (!batchMap.has(key)) {
+      batchMap.set(key, {
+        batch: key,
+        introDate: item.batchIntroDate || '',
+        totalItems: 0,
+        totalFineGoldWeight: 0,
+        soldItems: 0,
+        inStock: 0,
+        soldFineGoldWeight: 0,
+      });
+    }
+    const b = batchMap.get(key)!;
+    b.totalItems += 1;
+    b.totalFineGoldWeight += item.fineGoldWeight ?? item.initialGoldWeight ?? 0;
+    if (item.status === 'sold') {
+      b.soldItems += 1;
+      b.soldFineGoldWeight += item.fineGoldWeight ?? item.initialGoldWeight ?? 0;
+    } else {
+      b.inStock += 1;
+    }
+    if (!b.introDate && item.batchIntroDate) b.introDate = item.batchIntroDate;
+  }
+  const batchSummary = Array.from(batchMap.values()).sort((a, b) => a.batch.localeCompare(b.batch));
+
   return {
     items,
     sold,
@@ -185,7 +212,16 @@ function parseReport2() {
       operatingCost: items.reduce((s, i) => s + i.totalOperatingCost, 0),
       msShare: items.reduce((s, i) => s + i.totalMsShare, 0),
       sgShare: items.reduce((s, i) => s + i.totalSgShare, 0),
+      labourSharableProfit: items.reduce(
+        (s, i) => s + i.totalOperatingCost + i.totalMsShare + i.totalSgShare,
+        0,
+      ),
     },
+    batchSummary,
+    totalPieces: items.length,
+    soldPieces: sold.length,
+    inStock: pending.length,
+    totalFineGoldWeight: items.reduce((s, i) => s + (i.fineGoldWeight ?? i.initialGoldWeight ?? 0), 0),
   };
 }
 
@@ -217,6 +253,7 @@ function parseReport3() {
       operatingCost: months.reduce((s, m) => s + m.operatingCost, 0),
       msShare: months.reduce((s, m) => s + m.msShare, 0),
       sgShare: months.reduce((s, m) => s + m.sgShare, 0),
+      labourSharableProfit: months.reduce((s, m) => s + m.labourSharableProfit, 0),
     },
     initialGoldWeight,
   };
