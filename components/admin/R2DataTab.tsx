@@ -16,7 +16,16 @@ function apiJson(url: string, method: string, body?: unknown) {
   }).then(r => r.json());
 }
 
-const EMPTY_ITEM = { tagNo: '', salesDate: '', purity: '22', initialGoldWeight: '' };
+const EMPTY_ITEM = {
+  tagNo: '',
+  salesDate: '',
+  purity: '22',
+  initialGoldWeight: '',
+  fineGoldWeight: '',
+  batch: '',
+  batchIntroDate: '',
+  notes: '',
+};
 
 // ── Month form inside an expanded row ────────────────────────────────────────
 
@@ -221,7 +230,16 @@ export function R2DataTab() {
   });
 
   function openEdit(item: R2Doc) {
-    setForm({ tagNo: item.tagNo, salesDate: item.salesDate, purity: item.purity, initialGoldWeight: String(item.initialGoldWeight) });
+    setForm({
+      tagNo: item.tagNo,
+      salesDate: item.salesDate,
+      purity: item.purity,
+      initialGoldWeight: String(item.initialGoldWeight),
+      fineGoldWeight: String(item.fineGoldWeight ?? item.initialGoldWeight ?? ''),
+      batch: item.batch ?? '',
+      batchIntroDate: item.batchIntroDate ?? '',
+      notes: item.notes ?? '',
+    });
     setEditId(item._id); setShowForm(true); setFormError('');
   }
 
@@ -278,11 +296,36 @@ export function R2DataTab() {
                   className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-amber-400" />
               </div>
               <div>
+                <label className="block text-xs font-medium text-zinc-600 mb-1">Fine Gold Weight (g)</label>
+                <input type="number" step="any" value={form.fineGoldWeight} onChange={f('fineGoldWeight')} placeholder="43.142"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-amber-400" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-zinc-600 mb-1">Batch</label>
+                <select value={form.batch} onChange={f('batch')}
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-300 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400">
+                  <option value="">— Select batch —</option>
+                  <option value="Batch 1">Batch 1</option>
+                  <option value="Batch 2">Batch 2</option>
+                  <option value="Batch 3">Batch 3</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-zinc-600 mb-1">Batch Intro Date</label>
+                <input type="text" value={form.batchIntroDate} onChange={f('batchIntroDate')} placeholder="10-Apr-2025"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-amber-400" />
+              </div>
+              <div>
                 <label className="block text-xs font-medium text-zinc-600 mb-1">
                   Sale Date
                   <span className="text-zinc-400 font-normal ml-1">(leave blank if pending)</span>
                 </label>
                 <input type="text" value={form.salesDate} onChange={f('salesDate')} placeholder="09/04/2025"
+                  className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-amber-400" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-zinc-600 mb-1">Notes</label>
+                <input type="text" value={form.notes} onChange={f('notes')} placeholder="Profit settled / Holding cost accruing"
                   className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-amber-400" />
               </div>
             </div>

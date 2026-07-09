@@ -37,11 +37,25 @@ export interface Report2Item {
   salesDate: string;
   purity: string;
   initialGoldWeight: number;
+  fineGoldWeight?: number;
+  batch?: string;
+  batchIntroDate?: string;
+  notes?: string;
   status: 'sold' | 'pending';
   months: MonthRow[];
   totalMsShare: number;
   totalSgShare: number;
   totalOperatingCost: number;
+}
+
+export interface BatchSummary {
+  batch: string;
+  introDate: string;
+  totalItems: number;
+  totalFineGoldWeight: number;
+  soldItems: number;
+  inStock: number;
+  soldFineGoldWeight: number;
 }
 
 export interface DashboardData {
@@ -60,11 +74,16 @@ export interface DashboardData {
     items: Report2Item[];
     sold: Report2Item[];
     pending: Report2Item[];
-    totals: { operatingCost: number; msShare: number; sgShare: number };
+    totals: { operatingCost: number; msShare: number; sgShare: number; labourSharableProfit: number };
+    batchSummary: BatchSummary[];
+    totalPieces: number;
+    soldPieces: number;
+    inStock: number;
+    totalFineGoldWeight: number;
   };
   report3: {
     months: MonthRow[];
-    totals: { operatingCost: number; msShare: number; sgShare: number };
+    totals: { operatingCost: number; msShare: number; sgShare: number; labourSharableProfit: number };
     initialGoldWeight: number;
   };
 }

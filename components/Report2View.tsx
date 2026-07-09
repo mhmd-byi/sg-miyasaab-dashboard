@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, Fragment } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -149,6 +149,22 @@ export function Report2View({ data }: { data: DashboardData['report2'] }) {
           <span className="text-zinc-500">{fmt(getValue<number>())}</span>
         ),
       },
+      {
+        accessorKey: 'batch',
+        header: 'Batch',
+        enableSorting: false,
+        cell: ({ getValue }) => (
+          <span className="text-xs text-zinc-500">{getValue<string>() || '—'}</span>
+        ),
+      },
+      {
+        accessorKey: 'notes',
+        header: 'Notes',
+        enableSorting: false,
+        cell: ({ getValue }) => (
+          <span className="text-xs text-zinc-400">{getValue<string>() || '—'}</span>
+        ),
+      },
     ],
     [],
   );
@@ -245,9 +261,8 @@ export function Report2View({ data }: { data: DashboardData['report2'] }) {
                 </tr>
               ) : (
                 table.getRowModel().rows.map((row, idx) => (
-                  <>
+                  <Fragment key={row.id}>
                     <tr
-                      key={row.id}
                       onClick={() => row.toggleExpanded()}
                       className={`border-b border-zinc-100 hover:bg-amber-50/40 cursor-pointer transition-colors ${idx % 2 !== 0 ? 'bg-zinc-50/40' : ''} ${row.getIsExpanded() ? 'bg-amber-50/60' : ''}`}
                     >
@@ -261,13 +276,13 @@ export function Report2View({ data }: { data: DashboardData['report2'] }) {
                       })}
                     </tr>
                     {row.getIsExpanded() && (
-                      <tr key={`${row.id}-expanded`}>
+                      <tr>
                         <td colSpan={columns.length} className="p-0">
                           <MonthsTable months={row.original.months} />
                         </td>
                       </tr>
                     )}
-                  </>
+                  </Fragment>
                 ))
               )}
             </tbody>

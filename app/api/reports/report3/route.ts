@@ -11,7 +11,7 @@ export async function GET() {
       | null;
 
     if (!doc) {
-      return NextResponse.json({ months: [], totals: { operatingCost: 0, msShare: 0, sgShare: 0 }, initialGoldWeight: 0 });
+      return NextResponse.json({ months: [], totals: { operatingCost: 0, msShare: 0, sgShare: 0, labourSharableProfit: 0 }, initialGoldWeight: 0 });
     }
 
     const { months, initialGoldWeight } = doc;
@@ -19,11 +19,12 @@ export async function GET() {
       operatingCost: months.reduce((s, m) => s + m.operatingCost, 0),
       msShare: months.reduce((s, m) => s + m.msShare, 0),
       sgShare: months.reduce((s, m) => s + m.sgShare, 0),
+      labourSharableProfit: months.reduce((s, m) => s + m.labourSharableProfit, 0),
     };
 
     return NextResponse.json({ months, totals, initialGoldWeight });
   } catch (err) {
     console.error('[report3]', err);
-    return NextResponse.json({ months: [], totals: { operatingCost: 0, msShare: 0, sgShare: 0 }, initialGoldWeight: 0 }, { status: 500 });
+    return NextResponse.json({ months: [], totals: { operatingCost: 0, msShare: 0, sgShare: 0, labourSharableProfit: 0 }, initialGoldWeight: 0 }, { status: 500 });
   }
 }
