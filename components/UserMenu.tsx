@@ -59,6 +59,13 @@ export function UserMenu({ user }: { user: SessionUser }) {
               </span>
             </div>
 
+            <button
+              onClick={() => { setOpen(false); router.push('/profile'); }}
+              className="w-full text-left px-4 py-2.5 text-sm text-zinc-700 hover:bg-amber-50 transition-colors flex items-center gap-2"
+            >
+              <span>👤</span> My Profile
+            </button>
+
             {user.role === 'admin' && (
               <>
                 <button
