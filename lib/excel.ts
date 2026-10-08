@@ -263,7 +263,7 @@ function parseReport3() {
 
 export function parseAllReports(): DashboardData {
   return {
-    report1: parseReport1(),
+    report1: { ...parseReport1(), stockCount: 0, stockWeight: 0 },
     report2: parseReport2(),
     report3: parseReport3(),
   };

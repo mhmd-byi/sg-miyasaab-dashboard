@@ -12,7 +12,10 @@ interface R1Doc extends Report1Item {
   labourRatePct: number;
 }
 
+type EntryStatus = 'sold' | 'stock';
+
 const EMPTY_FORM = {
+  status: 'stock' as EntryStatus,
   tagNo: '', salesDate: '', goldWeightG: '', goldRate22K: '',
   purity: '22', labourRatePct: '', labourCostCharged: '0',
 };
@@ -39,7 +42,10 @@ export function R1DataTab() {
     queryFn: () => fetch('/api/admin/data/report1').then(r => r.json()) as Promise<{ items: R1Doc[] }>,
   });
 
-  const invalidate = () => qc.invalidateQueries({ queryKey: ['admin-r1'] });
+  const invalidate = () => {
+    qc.invalidateQueries({ queryKey: ['admin-r1'] });
+    qc.invalidateQueries({ queryKey: ['report1'] }); // keep the dashboard in sync
+  };
 
   const saveMut = useMutation({
     mutationFn: (body: typeof EMPTY_FORM) =>
@@ -66,6 +72,7 @@ export function R1DataTab() {
   function openEdit(item: R1Doc) {
     const rate = item.labourRatePct || inferLabourRatePct(item.goldSellPrice, item.labourProfitCharged);
     setForm({
+      status: item.status === 'stock' ? 'stock' : 'sold',
       tagNo: item.tagNo, salesDate: item.salesDate,
       goldWeightG: String(item.goldWeightG), goldRate22K: String(item.goldRate22K),
       purity: String(item.purity), labourRatePct: String(rate),
@@ -83,13 +90,15 @@ export function R1DataTab() {
     setForm(v => ({ ...v, [k]: e.target.value }));
 
   const items = data?.items ?? [];
+  const isStock = form.status === 'stock';
+  const stockCount = items.filter(i => i.status === 'stock').length;
 
   return (
     <div className="space-y-5">
       {/* Toolbar */}
       <div className="flex items-center justify-between">
         <p className="text-sm text-zinc-500">
-          {items.length} {items.length === 1 ? 'entry' : 'entries'}
+          {items.length} {items.length === 1 ? 'entry' : 'entries'} · {stockCount} in stock
         </p>
         <button
           onClick={() => { setEditId(null); setForm(EMPTY_FORM); setShowForm(v => !v); setFormError(''); }}
@@ -103,17 +112,27 @@ export function R1DataTab() {
       {showForm && (
         <div className="bg-white rounded-2xl border border-amber-200 shadow-sm p-6">
           <h3 className="text-sm font-semibold text-zinc-700 mb-4">
-            {editId ? 'Edit Entry' : 'New Entry — Ornaments Sold'}
+            {editId ? 'Edit Entry' : isStock ? 'New Entry — Stock' : 'New Entry — Ornaments Sold'}
           </h3>
           <form onSubmit={handleSubmit}>
+            {/* Entry type */}
+            <div className="inline-flex rounded-lg border border-amber-200 p-0.5 mb-4" role="group" aria-label="Entry type">
+              {(['stock', 'sold'] as const).map(s => (
+                <button key={s} type="button" aria-pressed={form.status === s}
+                  onClick={() => setForm(v => ({ ...v, status: s }))}
+                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${form.status === s ? 'bg-amber-700 text-white' : 'text-zinc-600 hover:bg-amber-50'}`}>
+                  {s === 'stock' ? 'Stock (not sold yet)' : 'Sold'}
+                </button>
+              ))}
+            </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5">
               {/* Manual inputs */}
               {[
                 { k: 'tagNo' as const, label: 'Tag No', type: 'text', placeholder: 'MBAN32' },
-                { k: 'salesDate' as const, label: 'Sale Date (dd/mm/yyyy)', type: 'text', placeholder: '09/04/2025' },
+                { k: 'salesDate' as const, label: 'Sale Date (dd/mm/yyyy)', type: 'text', placeholder: '09/04/2025', soldOnly: true },
                 { k: 'goldWeightG' as const, label: 'Gold Weight (g)', type: 'number', placeholder: '46.893' },
-                { k: 'goldRate22K' as const, label: 'Gold Rate 22K (₨)', type: 'number', placeholder: '9428' },
-              ].map(({ k, label, type, placeholder }) => (
+                { k: 'goldRate22K' as const, label: 'Gold Rate 22K (₨)', type: 'number', placeholder: '9428', soldOnly: true },
+              ].filter(field => !(isStock && field.soldOnly)).map(({ k, label, type, placeholder }) => (
                 <div key={k}>
                   <label className="block text-xs font-medium text-zinc-600 mb-1">{label}</label>
                   <input
@@ -132,6 +151,8 @@ export function R1DataTab() {
                   <option value="24">24K</option>
                 </select>
               </div>
+              {!isStock && (
+                <>
               <div>
                 <label className="block text-xs font-medium text-zinc-600 mb-1">
                   Labour Rate %
@@ -150,10 +171,12 @@ export function R1DataTab() {
                   className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
                 />
               </div>
+                </>
+              )}
             </div>
 
             {/* Calculated preview */}
-            <R1CalcPreview calc={calc} />
+            {!isStock && <R1CalcPreview calc={calc} />}
 
             {formError && (
               <p className="mt-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{formError}</p>
@@ -184,7 +207,7 @@ export function R1DataTab() {
             <table className="w-full text-sm whitespace-nowrap">
               <thead>
                 <tr className="bg-amber-50 border-b border-amber-200">
-                  {['Tag No','Sale Date','Weight (g)','Rate 22K','Purity','Rate%','Gold Sell ₨','Labour Profit ₨','MS Share ₨','SG Share ₨',''].map(h => (
+                  {['Tag No','Status','Sale Date','Weight (g)','Rate 22K','Purity','Rate%','Gold Sell ₨','Labour Profit ₨','MS Share ₨','SG Share ₨',''].map(h => (
                     <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-amber-800 uppercase tracking-wide">
                       {h}
                     </th>
@@ -195,6 +218,11 @@ export function R1DataTab() {
                 {items.map((item, idx) => (
                   <tr key={item._id} className={`border-b border-zinc-100 hover:bg-amber-50/40 ${idx % 2 !== 0 ? 'bg-zinc-50/30' : ''}`}>
                     <td className="px-4 py-3 font-medium text-zinc-800">{item.tagNo}</td>
+                    <td className="px-4 py-3">
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${item.status === 'stock' ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}`}>
+                        {item.status === 'stock' ? 'In stock' : 'Sold'}
+                      </span>
+                    </td>
                     <td className="px-4 py-3 text-zinc-600">{item.salesDate || '—'}</td>
                     <td className="px-4 py-3 text-right text-zinc-700">{fmtGold(item.goldWeightG)}</td>
                     <td className="px-4 py-3 text-right text-zinc-700">{fmtRate(item.goldRate22K)}</td>

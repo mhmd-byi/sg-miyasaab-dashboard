@@ -25,6 +25,7 @@ const MonthRowSchema = new Schema(
 
 const Report1Schema = new Schema(
   {
+    status: { type: String, enum: ['sold', 'stock'], default: 'sold' },
     tagNo: String,
     salesDate: String,
     goldWeightG: Number,

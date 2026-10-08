@@ -20,6 +20,19 @@ export function Report1View({ data }: { data: DashboardData['report1'] }) {
         ),
       },
       {
+        accessorKey: 'status',
+        header: 'Status',
+        enableSorting: false,
+        cell: ({ getValue }) => {
+          const inStock = getValue<string | undefined>() === 'stock';
+          return (
+            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${inStock ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700'}`}>
+              {inStock ? 'In stock' : 'Sold'}
+            </span>
+          );
+        },
+      },
+      {
         accessorKey: 'salesDate',
         header: 'Sale Date',
         cell: ({ getValue }) => (
@@ -84,7 +97,7 @@ export function Report1View({ data }: { data: DashboardData['report1'] }) {
     [],
   );
 
-  const chartData = data.items.map(item => ({
+  const chartData = data.items.filter(item => item.status !== 'stock').map(item => ({
     name: item.tagNo,
     msShare: item.msShare,
     sgShare: item.sgShare,
@@ -104,6 +117,13 @@ export function Report1View({ data }: { data: DashboardData['report1'] }) {
           accent
         />
         <KpiCard label={`${REPORT_CONFIG.sg.label} Share (40%)`} value={fmt(t.sgShare)} />
+        {data.stockCount > 0 && (
+          <KpiCard
+            label="In Stock"
+            value={`${data.stockCount} pcs`}
+            subLabel={`${fmtGold(data.stockWeight)} · not sold yet`}
+          />
+        )}
       </div>
 
       {/* Chart */}
@@ -120,7 +140,7 @@ export function Report1View({ data }: { data: DashboardData['report1'] }) {
         columns={columns}
         footer={
           <>
-            <td className="px-4 py-3 text-amber-900" colSpan={5}>TOTAL</td>
+            <td className="px-4 py-3 text-amber-900" colSpan={6}>TOTAL</td>
             <td className="px-4 py-3 text-right text-amber-900">{fmt(t.goldSellPrice)}</td>
             <td className="px-4 py-3 text-right text-amber-900">{fmt(t.labourProfitCharged)}</td>
             <td className="px-4 py-3 text-right text-amber-900">{fmt(t.operatingCost)}</td>

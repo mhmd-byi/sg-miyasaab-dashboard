@@ -1,4 +1,5 @@
 export interface Report1Item {
+  status?: 'sold' | 'stock';  // missing on legacy docs → treated as sold
   tagNo: string;
   salesDate: string;
   goldWeightG: number;
@@ -69,6 +70,8 @@ export interface DashboardData {
       msShare: number;
       sgShare: number;
     };
+    stockCount: number;
+    stockWeight: number;
   };
   report2: {
     items: Report2Item[];
