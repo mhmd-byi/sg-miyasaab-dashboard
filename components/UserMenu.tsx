@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
+import { ChevronDown, LogOut, PenLine, UserCircle, Users } from 'lucide-react';
 import type { SessionUser } from '@/lib/auth';
 import { ROLE_LABEL } from '@/lib/config';
 
@@ -37,7 +38,7 @@ export function UserMenu({ user }: { user: SessionUser }) {
           <p className="text-sm font-medium text-white leading-tight">{user.username}</p>
           <p className="text-xs text-amber-300 leading-tight">{ROLE_LABEL[user.role]}</p>
         </div>
-        <span className="text-amber-400 text-xs ml-0.5">▾</span>
+        <ChevronDown className="size-4 text-amber-400" aria-hidden />
       </button>
 
       {open && (
@@ -63,7 +64,7 @@ export function UserMenu({ user }: { user: SessionUser }) {
               onClick={() => { setOpen(false); router.push('/profile'); }}
               className="w-full text-left px-4 py-2.5 text-sm text-zinc-700 hover:bg-amber-50 transition-colors flex items-center gap-2"
             >
-              <span>👤</span> My Profile
+              <UserCircle className="size-4 text-zinc-500" aria-hidden /> My Profile
             </button>
 
             {user.role === 'admin' && (
@@ -72,13 +73,13 @@ export function UserMenu({ user }: { user: SessionUser }) {
                   onClick={() => { setOpen(false); router.push('/admin/data'); }}
                   className="w-full text-left px-4 py-2.5 text-sm text-zinc-700 hover:bg-amber-50 transition-colors flex items-center gap-2"
                 >
-                  <span>✏️</span> Data Entry
+                  <PenLine className="size-4 text-zinc-500" aria-hidden /> Data Entry
                 </button>
                 <button
                   onClick={() => { setOpen(false); router.push('/admin/users'); }}
                   className="w-full text-left px-4 py-2.5 text-sm text-zinc-700 hover:bg-amber-50 transition-colors flex items-center gap-2"
                 >
-                  <span>👥</span> Manage Users
+                  <Users className="size-4 text-zinc-500" aria-hidden /> Manage Users
                 </button>
               </>
             )}
@@ -88,7 +89,10 @@ export function UserMenu({ user }: { user: SessionUser }) {
               disabled={loggingOut}
               className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors border-t border-zinc-100 disabled:opacity-60"
             >
-              {loggingOut ? 'Signing out…' : '→ Sign out'}
+              <span className="flex items-center gap-2">
+                <LogOut className="size-4" aria-hidden />
+                {loggingOut ? 'Signing out…' : 'Sign out'}
+              </span>
             </button>
           </div>
         </>
