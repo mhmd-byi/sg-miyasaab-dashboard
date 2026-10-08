@@ -20,3 +20,6 @@ export const REPORT_CONFIG = {
   sg: { label: 'SG', share: 40, color: '#78716c' },
   operatingCostPct: 15,
 };
+
+// Karat options offered in the data-entry purity dropdowns
+export const PURITY_OPTIONS = [24, 23, 22, 21, 20, 18, 16, 14, 12, 10, 9] as const;

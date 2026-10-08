@@ -7,6 +7,7 @@ export function buildR1Fields(b: Record<string, unknown>) {
   const base = {
     status,
     tagNo: String(b.tagNo ?? '').trim(),
+    stockDate: String(b.stockDate ?? '').trim(),
     goldWeightG: Number(b.goldWeightG ?? 0),
     purity: Number(b.purity ?? 22),
   };

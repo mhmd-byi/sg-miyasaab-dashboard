@@ -4,6 +4,7 @@ import { useState, useMemo, Fragment, type FormEvent } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fmt, fmtGold, fmtRate } from '@/lib/utils';
 import { calcMonthRow } from '@/lib/calculations';
+import { PURITY_OPTIONS } from '@/lib/config';
 import { MonthCalcPreview } from './CalcPreview';
 import type { Report2Item, MonthRow } from '@/lib/types';
 
@@ -285,9 +286,7 @@ export function R2DataTab() {
                 <label className="block text-xs font-medium text-zinc-600 mb-1">Purity</label>
                 <select value={form.purity} onChange={f('purity')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-300 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400">
-                  <option value="22">22K</option>
-                  <option value="18">18K</option>
-                  <option value="24">24K</option>
+                  {PURITY_OPTIONS.map(k => <option key={k} value={k}>{k}K</option>)}
                 </select>
               </div>
               <div>

@@ -33,6 +33,13 @@ export function Report1View({ data }: { data: DashboardData['report1'] }) {
         },
       },
       {
+        accessorKey: 'stockDate',
+        header: 'Stock Date',
+        cell: ({ getValue }) => (
+          <span className="text-zinc-600">{getValue<string | undefined>() || '—'}</span>
+        ),
+      },
+      {
         accessorKey: 'salesDate',
         header: 'Sale Date',
         cell: ({ getValue }) => (
@@ -140,7 +147,7 @@ export function Report1View({ data }: { data: DashboardData['report1'] }) {
         columns={columns}
         footer={
           <>
-            <td className="px-4 py-3 text-amber-900" colSpan={6}>TOTAL</td>
+            <td className="px-4 py-3 text-amber-900" colSpan={7}>TOTAL</td>
             <td className="px-4 py-3 text-right text-amber-900">{fmt(t.goldSellPrice)}</td>
             <td className="px-4 py-3 text-right text-amber-900">{fmt(t.labourProfitCharged)}</td>
             <td className="px-4 py-3 text-right text-amber-900">{fmt(t.operatingCost)}</td>

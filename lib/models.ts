@@ -27,6 +27,7 @@ const Report1Schema = new Schema(
   {
     status: { type: String, enum: ['sold', 'stock'], default: 'sold' },
     tagNo: String,
+    stockDate: { type: String, default: '' },
     salesDate: String,
     goldWeightG: Number,
     goldRate22K: Number,

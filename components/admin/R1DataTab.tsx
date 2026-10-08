@@ -4,6 +4,7 @@ import { useState, useMemo, type FormEvent } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fmt, fmtGold, fmtRate } from '@/lib/utils';
 import { calcR1, inferLabourRatePct } from '@/lib/calculations';
+import { PURITY_OPTIONS } from '@/lib/config';
 import { R1CalcPreview } from './CalcPreview';
 import type { Report1Item } from '@/lib/types';
 
@@ -16,7 +17,7 @@ type EntryStatus = 'sold' | 'stock';
 
 const EMPTY_FORM = {
   status: 'stock' as EntryStatus,
-  tagNo: '', salesDate: '', goldWeightG: '', goldRate22K: '',
+  tagNo: '', stockDate: '', salesDate: '', goldWeightG: '', goldRate22K: '',
   purity: '22', labourRatePct: '', labourCostCharged: '0',
 };
 
@@ -73,7 +74,7 @@ export function R1DataTab() {
     const rate = item.labourRatePct || inferLabourRatePct(item.goldSellPrice, item.labourProfitCharged);
     setForm({
       status: item.status === 'stock' ? 'stock' : 'sold',
-      tagNo: item.tagNo, salesDate: item.salesDate,
+      tagNo: item.tagNo, stockDate: item.stockDate ?? '', salesDate: item.salesDate,
       goldWeightG: String(item.goldWeightG), goldRate22K: String(item.goldRate22K),
       purity: String(item.purity), labourRatePct: String(rate),
       labourCostCharged: String(item.labourCostCharged),
@@ -129,26 +130,28 @@ export function R1DataTab() {
               {/* Manual inputs */}
               {[
                 { k: 'tagNo' as const, label: 'Tag No', type: 'text', placeholder: 'MBAN32' },
+                { k: 'stockDate' as const, label: 'Stock Date (dd/mm/yyyy)', type: 'text', placeholder: '01/04/2025', stockRequired: true },
                 { k: 'salesDate' as const, label: 'Sale Date (dd/mm/yyyy)', type: 'text', placeholder: '09/04/2025', soldOnly: true },
                 { k: 'goldWeightG' as const, label: 'Gold Weight (g)', type: 'number', placeholder: '46.893' },
                 { k: 'goldRate22K' as const, label: 'Gold Rate 22K (₨)', type: 'number', placeholder: '9428', soldOnly: true },
-              ].filter(field => !(isStock && field.soldOnly)).map(({ k, label, type, placeholder }) => (
+              ].filter(field => !(isStock && field.soldOnly)).map(field => {
+                const { k, label, type, placeholder } = field;
+                return (
                 <div key={k}>
                   <label className="block text-xs font-medium text-zinc-600 mb-1">{label}</label>
                   <input
-                    type={type} value={form[k]} onChange={f(k)} required placeholder={placeholder}
+                    type={type} value={form[k]} onChange={f(k)} required={!('stockRequired' in field) || isStock} placeholder={placeholder}
                     step={type === 'number' ? 'any' : undefined}
                     className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
                   />
                 </div>
-              ))}
+                );
+              })}
               <div>
                 <label className="block text-xs font-medium text-zinc-600 mb-1">Purity</label>
                 <select value={form.purity} onChange={f('purity')}
                   className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-300 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400">
-                  <option value="22">22K</option>
-                  <option value="18">18K</option>
-                  <option value="24">24K</option>
+                  {PURITY_OPTIONS.map(k => <option key={k} value={k}>{k}K</option>)}
                 </select>
               </div>
               {!isStock && (
@@ -207,7 +210,7 @@ export function R1DataTab() {
             <table className="w-full text-sm whitespace-nowrap">
               <thead>
                 <tr className="bg-amber-50 border-b border-amber-200">
-                  {['Tag No','Status','Sale Date','Weight (g)','Rate 22K','Purity','Rate%','Gold Sell ₨','Labour Profit ₨','MS Share ₨','SG Share ₨',''].map(h => (
+                  {['Tag No','Status','Stock Date','Sale Date','Weight (g)','Rate 22K','Purity','Rate%','Gold Sell ₨','Labour Profit ₨','MS Share ₨','SG Share ₨',''].map(h => (
                     <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-amber-800 uppercase tracking-wide">
                       {h}
                     </th>
@@ -223,6 +226,7 @@ export function R1DataTab() {
                         {item.status === 'stock' ? 'In stock' : 'Sold'}
                       </span>
                     </td>
+                    <td className="px-4 py-3 text-zinc-600">{item.stockDate || '—'}</td>
                     <td className="px-4 py-3 text-zinc-600">{item.salesDate || '—'}</td>
                     <td className="px-4 py-3 text-right text-zinc-700">{fmtGold(item.goldWeightG)}</td>
                     <td className="px-4 py-3 text-right text-zinc-700">{fmtRate(item.goldRate22K)}</td>

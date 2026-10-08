@@ -1,6 +1,7 @@
 export interface Report1Item {
   status?: 'sold' | 'stock';  // missing on legacy docs → treated as sold
   tagNo: string;
+  stockDate?: string;  // date the piece entered stock (dd/mm/yyyy)
   salesDate: string;
   goldWeightG: number;
   goldRate22K: number;
