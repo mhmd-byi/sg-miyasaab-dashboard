@@ -10,6 +10,7 @@ import {
   type RowData,
 } from '@tanstack/react-table';
 import { useState, type ReactNode } from 'react';
+import { SortIcon } from './SortIcon';
 
 // Augment TanStack Table's ColumnMeta with alignment support
 declare module '@tanstack/react-table' {
@@ -72,9 +73,7 @@ export function DataTable<TData>({
                           ? null
                           : flexRender(header.column.columnDef.header, header.getContext())}
                         {canSort && (
-                          <span className="text-amber-400 text-xs">
-                            {sorted === 'asc' ? '↑' : sorted === 'desc' ? '↓' : '↕'}
-                          </span>
+                          <SortIcon direction={sorted} />
                         )}
                       </span>
                     </th>

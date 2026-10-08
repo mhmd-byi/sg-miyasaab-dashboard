@@ -7,6 +7,7 @@ import { calcMonthRow } from '@/lib/calculations';
 import { PURITY_OPTIONS } from '@/lib/config';
 import { MonthCalcPreview } from './CalcPreview';
 import type { Report2Item, MonthRow } from '@/lib/types';
+import { ChevronDown, ChevronUp, Pencil, Plus, Trash2, X } from 'lucide-react';
 
 interface R2Doc extends Report2Item { _id: string }
 
@@ -163,12 +164,14 @@ function MonthForm({
                   <td className="px-3 py-1.5">
                     <div className="flex gap-1">
                       <button onClick={() => { setGoldRate(String(m.goldRate24K)); setEditIdx(idx); setShowAdd(false); setFormError(''); }}
-                        className="px-1.5 py-0.5 rounded border border-amber-300 text-amber-700 hover:bg-amber-50">
-                        ✎
+                        aria-label={`Edit ${m.month}`}
+                        className="px-1.5 py-1 rounded border border-amber-300 text-amber-700 hover:bg-amber-50">
+                        <Pencil className="size-3.5" aria-hidden />
                       </button>
                       <button onClick={() => { if (confirm(`Delete ${m.month}?`)) deleteMut.mutate(idx); }}
-                        className="px-1.5 py-0.5 rounded border border-red-200 text-red-500 hover:bg-red-50">
-                        ✕
+                        aria-label={`Delete ${m.month}`}
+                        className="px-1.5 py-1 rounded border border-red-200 text-red-500 hover:bg-red-50">
+                        <Trash2 className="size-3.5" aria-hidden />
                       </button>
                     </div>
                   </td>
@@ -184,9 +187,9 @@ function MonthForm({
       <div className="flex gap-2">
         <button
           onClick={() => { setShowAdd(v => !v); setEditIdx(null); setMonthYM(nextDefault); setGoldRate(''); setFormError(''); }}
-          className="text-xs px-3 py-1.5 rounded-lg bg-amber-700 text-white hover:bg-amber-600 transition-colors"
+          className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg bg-amber-700 text-white hover:bg-amber-600 transition-colors"
         >
-          + Add Month
+          <Plus className="size-3.5" aria-hidden /> Add Month
         </button>
         <button onClick={onDone} className="text-xs px-3 py-1.5 rounded-lg border border-zinc-300 text-zinc-500 hover:bg-zinc-50 transition-colors">
           Collapse
@@ -264,8 +267,8 @@ export function R2DataTab() {
         </div>
         <button
           onClick={() => { setEditId(null); setForm(EMPTY_ITEM); setShowForm(v => !v); setFormError(''); }}
-          className="px-4 py-2 rounded-lg bg-amber-700 hover:bg-amber-600 text-white text-sm font-medium transition-colors">
-          {showForm && !editId ? '✕ Cancel' : '+ Add Item'}
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-amber-700 hover:bg-amber-600 text-white text-sm font-medium transition-colors">
+          {showForm && !editId ? <><X className="size-4" aria-hidden /> Cancel</> : <><Plus className="size-4" aria-hidden /> Add Item</>}
         </button>
       </div>
 
@@ -375,7 +378,7 @@ export function R2DataTab() {
                       className={`border-b border-zinc-100 cursor-pointer hover:bg-amber-50/40 ${idx % 2 !== 0 ? 'bg-zinc-50/30' : ''} ${expandedId === item._id ? 'bg-amber-50/60' : ''}`}
                       onClick={() => setExpandedId(v => v === item._id ? null : item._id)}
                     >
-                      <td className="px-3 py-3 text-zinc-400 text-xs">{expandedId === item._id ? '▲' : '▼'}</td>
+                      <td className="px-3 py-3 text-zinc-400 text-xs">{expandedId === item._id ? <ChevronUp className="size-4" aria-hidden /> : <ChevronDown className="size-4" aria-hidden />}</td>
                       <td className="px-4 py-3 text-zinc-400 text-xs">{item.srNo}</td>
                       <td className="px-4 py-3 font-medium text-zinc-800">{item.tagNo}</td>
                       <td className="px-4 py-3">

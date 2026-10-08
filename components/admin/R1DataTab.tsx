@@ -7,6 +7,7 @@ import { calcR1, inferLabourRatePct } from '@/lib/calculations';
 import { PURITY_OPTIONS } from '@/lib/config';
 import { R1CalcPreview } from './CalcPreview';
 import type { Report1Item } from '@/lib/types';
+import { Plus, X } from 'lucide-react';
 
 interface R1Doc extends Report1Item {
   _id: string;
@@ -103,9 +104,9 @@ export function R1DataTab() {
         </p>
         <button
           onClick={() => { setEditId(null); setForm(EMPTY_FORM); setShowForm(v => !v); setFormError(''); }}
-          className="px-4 py-2 rounded-lg bg-amber-700 hover:bg-amber-600 text-white text-sm font-medium transition-colors"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-amber-700 hover:bg-amber-600 text-white text-sm font-medium transition-colors"
         >
-          {showForm && !editId ? '✕ Cancel' : '+ Add Entry'}
+          {showForm && !editId ? <><X className="size-4" aria-hidden /> Cancel</> : <><Plus className="size-4" aria-hidden /> Add Entry</>}
         </button>
       </div>
 

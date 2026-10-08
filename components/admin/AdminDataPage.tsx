@@ -7,9 +7,10 @@ import { R1DataTab } from './R1DataTab';
 import { R2DataTab } from './R2DataTab';
 import { R3DataTab } from './R3DataTab';
 import { REPORT_CONFIG } from '@/lib/config';
+import { ArrowLeft } from 'lucide-react';
 
 const TABS = [
-  { id: 'r3' as const, label: REPORT_CONFIG.report3.label, desc: 'Monthly gold rate entry → all calculations auto-applied' },
+  { id: 'r3' as const, label: REPORT_CONFIG.report3.label, desc: 'Monthly gold rate entry: all calculations are applied automatically' },
   { id: 'r1' as const, label: REPORT_CONFIG.report1.label, desc: 'One row per ornament sold — enter tag, weight, rate, labour %' },
   { id: 'r2' as const, label: REPORT_CONFIG.report2.label, desc: 'Items with expandable monthly rows — only gold rate needed per month' },
 ];
@@ -43,7 +44,7 @@ export function AdminDataPage() {
               onClick={() => router.push('/')}
               className="flex items-center gap-1.5 text-amber-200 hover:text-white text-sm transition-colors"
             >
-              ← Dashboard
+              <ArrowLeft className="size-4" aria-hidden /> Dashboard
             </button>
           </div>
         </div>

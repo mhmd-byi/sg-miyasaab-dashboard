@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useCurrentUser } from '@/lib/hooks/useCurrentUser';
 import { ROLE_LABEL } from '@/lib/config';
+import { ArrowLeft } from 'lucide-react';
 
 interface UserRecord {
   _id: string;
@@ -72,7 +73,7 @@ export function AdminUsersClient() {
             onClick={() => router.push('/')}
             className="flex items-center gap-1.5 text-amber-200 hover:text-white text-sm transition-colors"
           >
-            ← Dashboard
+            <ArrowLeft className="size-4" aria-hidden /> Dashboard
           </button>
         </div>
       </header>

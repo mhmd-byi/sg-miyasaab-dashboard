@@ -6,6 +6,7 @@ import { fmt, fmtGold, fmtRate } from '@/lib/utils';
 import { calcMonthRow, recalcMonths, monthLabel } from '@/lib/calculations';
 import { MonthCalcPreview } from './CalcPreview';
 import type { MonthRow } from '@/lib/types';
+import { Plus, X } from 'lucide-react';
 
 interface R3Doc {
   initialGoldWeight: number;
@@ -154,9 +155,9 @@ export function R3DataTab() {
             setShowMonthForm(v => !v);
             setFormError('');
           }}
-          className="px-4 py-2 rounded-lg bg-amber-700 hover:bg-amber-600 text-white text-sm font-medium transition-colors"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-amber-700 hover:bg-amber-600 text-white text-sm font-medium transition-colors"
         >
-          {showMonthForm && editMonthIdx === null ? '✕ Cancel' : '+ Add Month'}
+          {showMonthForm && editMonthIdx === null ? <><X className="size-4" aria-hidden /> Cancel</> : <><Plus className="size-4" aria-hidden /> Add Month</>}
         </button>
       </div>
 

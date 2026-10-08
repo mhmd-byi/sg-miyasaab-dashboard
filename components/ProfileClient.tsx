@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { useCurrentUser } from '@/lib/hooks/useCurrentUser';
 import { ROLE_LABEL } from '@/lib/config';
+import { ArrowLeft } from 'lucide-react';
 
 const inputClass =
   'w-full px-3.5 py-2.5 rounded-lg border border-zinc-300 text-sm text-zinc-900 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition';
@@ -65,9 +66,9 @@ export function ProfileClient() {
           </div>
           <button
             onClick={() => router.push('/')}
-            className="text-amber-200 hover:text-white text-sm transition-colors"
+            className="flex items-center gap-1.5 text-amber-200 hover:text-white text-sm transition-colors"
           >
-            ← Dashboard
+            <ArrowLeft className="size-4" aria-hidden /> Dashboard
           </button>
         </div>
       </header>

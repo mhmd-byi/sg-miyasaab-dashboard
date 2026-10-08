@@ -15,6 +15,8 @@ import { KpiCard } from './KpiCard';
 import { fmt, fmtGold } from '@/lib/utils';
 import { REPORT_CONFIG } from '@/lib/config';
 import type { DashboardData, Report2Item, MonthRow } from '@/lib/types';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import { SortIcon } from './SortIcon';
 
 type FilterView = 'sold' | 'pending' | 'all';
 
@@ -77,7 +79,7 @@ export function Report2View({ data }: { data: DashboardData['report2'] }) {
             onClick={e => { e.stopPropagation(); row.toggleExpanded(); }}
             className="text-zinc-400 hover:text-amber-700 transition-colors text-xs"
           >
-            {row.getIsExpanded() ? '▲' : '▼'}
+            {row.getIsExpanded() ? <ChevronUp className="size-4" aria-label="Collapse row" /> : <ChevronDown className="size-4" aria-label="Expand row" />}
           </button>
         ),
       },
@@ -218,7 +220,7 @@ export function Report2View({ data }: { data: DashboardData['report2'] }) {
             {tab.label}
           </button>
         ))}
-        <span className="text-xs text-zinc-400 ml-1">▼ expand a row for monthly breakdown · click columns to sort</span>
+        <span className="text-xs text-zinc-400 ml-1">Expand a row for monthly breakdown · click columns to sort</span>
       </div>
 
       {/* TanStack Table with expandable rows */}
@@ -241,9 +243,7 @@ export function Report2View({ data }: { data: DashboardData['report2'] }) {
                         <span className="inline-flex items-center gap-1">
                           {flexRender(header.column.columnDef.header, header.getContext())}
                           {canSort && (
-                            <span className="text-amber-400 text-xs">
-                              {sorted === 'asc' ? '↑' : sorted === 'desc' ? '↓' : '↕'}
-                            </span>
+                            <SortIcon direction={sorted} />
                           )}
                         </span>
                       </th>
