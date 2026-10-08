@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import type { SessionUser } from '@/lib/auth';
+import { ROLE_LABEL } from '@/lib/config';
 
 export function UserMenu({ user }: { user: SessionUser }) {
   const router = useRouter();
@@ -34,7 +35,7 @@ export function UserMenu({ user }: { user: SessionUser }) {
         </span>
         <div className="hidden sm:block text-left">
           <p className="text-sm font-medium text-white leading-tight">{user.username}</p>
-          <p className="text-xs text-amber-300 leading-tight capitalize">{user.role}</p>
+          <p className="text-xs text-amber-300 leading-tight">{ROLE_LABEL[user.role]}</p>
         </div>
         <span className="text-amber-400 text-xs ml-0.5">▾</span>
       </button>
@@ -54,7 +55,7 @@ export function UserMenu({ user }: { user: SessionUser }) {
                     : 'bg-zinc-100 text-zinc-600'
                 }`}
               >
-                {user.role}
+                {ROLE_LABEL[user.role]}
               </span>
             </div>
 

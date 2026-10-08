@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useCurrentUser } from '@/lib/hooks/useCurrentUser';
+import { ROLE_LABEL } from '@/lib/config';
 
 interface UserRecord {
   _id: string;
@@ -134,7 +135,7 @@ export function AdminUsersClient() {
                 onChange={e => setForm(f => ({ ...f, role: e.target.value as 'user' | 'admin' }))}
                 className="w-full px-3.5 py-2.5 rounded-lg border border-zinc-300 text-sm text-zinc-900 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition"
               >
-                <option value="user">User — view only</option>
+                <option value="user">Viewer — dashboard view only</option>
                 <option value="admin">Admin — full access</option>
               </select>
             </div>
@@ -214,7 +215,7 @@ export function AdminUsersClient() {
                               : 'bg-zinc-100 text-zinc-600'
                           }`}
                         >
-                          {u.role}
+                          {ROLE_LABEL[u.role]}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-zinc-500 text-xs">

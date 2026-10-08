@@ -21,5 +21,8 @@ export const REPORT_CONFIG = {
   operatingCostPct: 15,
 };
 
+// Display names for stored roles ('user' is stored for viewers)
+export const ROLE_LABEL = { admin: 'Admin', user: 'Viewer' } as const;
+
 // Karat options offered in the data-entry purity dropdowns
 export const PURITY_OPTIONS = [24, 23, 22, 21, 20, 18, 16, 14, 12, 10, 9] as const;
