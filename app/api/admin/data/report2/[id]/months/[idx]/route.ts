@@ -36,10 +36,11 @@ export async function PUT(req: NextRequest, { params }: Ctx) {
   if (!item) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
   const months = (item.months as Array<{ month: string; goldRate24K: number }>) ?? [];
-  if (monthIdx < 0 || monthIdx >= months.length) return NextResponse.json({ error: 'Index out of range' }, { status: 400 });
+  if (!Number.isInteger(monthIdx) || monthIdx < 0 || monthIdx >= months.length) return NextResponse.json({ error: 'Index out of range' }, { status: 400 });
 
   months[monthIdx] = { ...months[monthIdx], goldRate24K: Number(goldRate24K) };
-  const recalculated = recalcMonths(months, item.initialGoldWeight as number, monthIdx);
+  // Recalculate the whole chain: each month's weight depends on the previous row's result.
+  const recalculated = recalcMonths(months, item.initialGoldWeight as number);
   const totals = sumTotals(recalculated);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

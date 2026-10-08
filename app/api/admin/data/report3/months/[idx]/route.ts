@@ -26,10 +26,11 @@ export async function PUT(req: NextRequest, { params }: Ctx) {
   if (!doc) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
   const months = [...((doc.months as Array<{ month: string; goldRate24K: number }>) ?? [])];
-  if (monthIdx < 0 || monthIdx >= months.length) return NextResponse.json({ error: 'Index out of range' }, { status: 400 });
+  if (!Number.isInteger(monthIdx) || monthIdx < 0 || monthIdx >= months.length) return NextResponse.json({ error: 'Index out of range' }, { status: 400 });
 
   months[monthIdx] = { ...months[monthIdx], goldRate24K: Number(goldRate24K) };
-  const recalculated = recalcMonths(months, doc.initialGoldWeight as number, monthIdx);
+  // Recalculate the whole chain: each month's weight depends on the previous row's result.
+  const recalculated = recalcMonths(months, doc.initialGoldWeight as number);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updated = await (Report3Model as any).findByIdAndUpdate(
