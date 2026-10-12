@@ -8,6 +8,7 @@ import { PURITY_OPTIONS } from '@/lib/config';
 import { R1CalcPreview } from './CalcPreview';
 import type { Report1Item } from '@/lib/types';
 import { Plus, X } from 'lucide-react';
+import { DateField } from './DateField';
 
 interface R1Doc extends Report1Item {
   _id: string;
@@ -131,8 +132,8 @@ export function R1DataTab() {
               {/* Manual inputs */}
               {[
                 { k: 'tagNo' as const, label: 'Tag No', type: 'text', placeholder: 'MBAN32' },
-                { k: 'stockDate' as const, label: 'Stock Date (dd/mm/yyyy)', type: 'text', placeholder: '01/04/2025', stockRequired: true },
-                { k: 'salesDate' as const, label: 'Sale Date (dd/mm/yyyy)', type: 'text', placeholder: '09/04/2025', soldOnly: true },
+                { k: 'stockDate' as const, label: 'Stock Date', type: 'date', placeholder: '', stockRequired: true },
+                { k: 'salesDate' as const, label: 'Sale Date', type: 'date', placeholder: '', soldOnly: true },
                 { k: 'goldWeightG' as const, label: 'Gold Weight (g)', type: 'number', placeholder: '46.893' },
                 { k: 'goldRate22K' as const, label: 'Gold Rate 22K (₨)', type: 'number', placeholder: '9428', soldOnly: true },
               ].filter(field => !(isStock && field.soldOnly)).map(field => {
@@ -140,11 +141,16 @@ export function R1DataTab() {
                 return (
                 <div key={k}>
                   <label className="block text-xs font-medium text-zinc-600 mb-1">{label}</label>
+                  {type === 'date' ? (
+                    <DateField value={form[k]} onChange={v => setForm(s => ({ ...s, [k]: v }))}
+                      required={!('stockRequired' in field) ? true : isStock} />
+                  ) : (
                   <input
                     type={type} value={form[k]} onChange={f(k)} required={!('stockRequired' in field) || isStock} placeholder={placeholder}
                     step={type === 'number' ? 'any' : undefined}
                     className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
                   />
+                  )}
                 </div>
                 );
               })}

@@ -8,6 +8,7 @@ import { PURITY_OPTIONS } from '@/lib/config';
 import { MonthCalcPreview } from './CalcPreview';
 import type { Report2Item, MonthRow } from '@/lib/types';
 import { ChevronDown, ChevronUp, Pencil, Plus, Trash2, X } from 'lucide-react';
+import { DateField } from './DateField';
 
 interface R2Doc extends Report2Item { _id: string }
 
@@ -314,16 +315,14 @@ export function R2DataTab() {
               </div>
               <div>
                 <label className="block text-xs font-medium text-zinc-600 mb-1">Batch Intro Date</label>
-                <input type="text" value={form.batchIntroDate} onChange={f('batchIntroDate')} placeholder="10-Apr-2025"
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                <DateField value={form.batchIntroDate} onChange={v => setForm(s => ({ ...s, batchIntroDate: v }))} />
               </div>
               <div>
                 <label className="block text-xs font-medium text-zinc-600 mb-1">
                   Sale Date
                   <span className="text-zinc-400 font-normal ml-1">(leave blank if pending)</span>
                 </label>
-                <input type="text" value={form.salesDate} onChange={f('salesDate')} placeholder="09/04/2025"
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                <DateField value={form.salesDate} onChange={v => setForm(s => ({ ...s, salesDate: v }))} />
               </div>
               <div>
                 <label className="block text-xs font-medium text-zinc-600 mb-1">Notes</label>
