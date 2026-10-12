@@ -6,7 +6,7 @@ export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Public: login page and all auth API routes
-  if (pathname.startsWith('/api/auth') || pathname === '/favicon.ico') {
+  if (pathname.startsWith('/api/auth') || pathname === '/favicon.ico' || pathname === '/icon.svg') {
     return NextResponse.next();
   }
 
