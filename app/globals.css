@@ -3,6 +3,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* The UI is designed light-only; keeps native controls (inputs, date picker) light in OS dark mode */
+  color-scheme: light;
 }
 
 @theme inline {
@@ -12,15 +14,22 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer base {
+  /* Form controls don't inherit text colour by default — set it explicitly so it never depends on the OS theme */
+  input,
+  select,
+  textarea {
+    color: #18181b;
+  }
+  
+  input::placeholder,
+  textarea::placeholder {
+    color: #a1a1aa;
+  }
 }
